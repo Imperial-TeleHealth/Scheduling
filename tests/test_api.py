@@ -31,3 +31,22 @@ async def test_view_available_appointments():
                 response = await client.get("/appointments/available")
                 assert response.status_code == 200
                 assert response.json() == mock_return_value
+
+
+# view my upcoming appointments
+@pytest.mark.asyncio
+async def test_view_patient_upcoming_appointments():
+    # Import the FastAPI app after setting up the test environment fixture
+    from api.main import app
+    mock_return_value = [
+        {"id": 1, "provider_id": 1, "start_time": "2022-01-01T09:00:00", "end_time": "2022-01-01T09:30:00", "status": "Booked"},
+        {"id": 2, "provider_id": 1, "start_time": "2022-01-01T10:00:00", "end_time": "2022-01-01T10:30:00", "status": "Booked"}
+    ]
+
+    with patch('api.services.get_patient_upcoming_appointments', return_value=mock_return_value):
+        async with LifespanManager(app):
+            # async with AsyncClient(app=app, base_url="http://test") as client:
+            async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+                response = await client.get("/appointments/1/upcoming")
+                assert response.status_code == 200
+                assert response.json() == mock_return_value

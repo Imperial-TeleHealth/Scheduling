@@ -1,10 +1,8 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
 
-from . import models, schemas, services  # Assuming you have Pydantic schemas defined for request and response validation
+from . import services  # Assuming you have Pydantic schemas defined for request and response validation
 from .dependencies import get_db  # Database session dependency
-from .models import Appointment, Availability  # Importing models
 
 app = FastAPI()
 
@@ -12,6 +10,12 @@ app = FastAPI()
 @app.get("/appointments/available")
 async def view_available_appointments(db: AsyncSession = Depends(get_db)):
     appointments = await services.get_available_appointments(db)
+    return appointments
+
+# view my patient's upcoming appointments
+@app.get("/appointments/{patient_id}/upcoming")
+async def view_patient_upcoming_appointments(patient_id: int, db: AsyncSession = Depends(get_db)):
+    appointments = await services.get_patient_upcoming_appointments(patient_id, db)
     return appointments
 
 # @app.post("/appointments/book", response_model=schemas.Appointment)

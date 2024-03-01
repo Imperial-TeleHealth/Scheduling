@@ -1,9 +1,10 @@
-
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Text, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.asyncio import AsyncSession
 from .database import Base
 import enum
+from sqlalchemy.orm import declarative_base
+
 
 class Role(enum.Enum):
     patient = "Patient"
@@ -29,29 +30,18 @@ class AppointmentStatus(enum.Enum):
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True)
-    password_hash = Column(String)
-    role = Column(Enum(Role))
-    first_name = Column(String)
-    last_name = Column(String)
-    phone_number = Column(String)
+
 
 class HealthcareProvider(Base):
     __tablename__ = "healthcare_providers"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey('users.id'))
-    specialization = Column(String)
-    bio = Column(Text)
-    license_number = Column(String)
     user = relationship("User")
 
 class Patient(Base):
     __tablename__ = "patients"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey('users.id'))
-    date_of_birth = Column(DateTime)
-    gender = Column(String)
-    medical_history_summary = Column(Text)
     user = relationship("User")
 
 class Availability(Base):
