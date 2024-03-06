@@ -29,9 +29,6 @@ class AppointmentStatus(str, enum.Enum):
 class UserBase(BaseModel):
     email: EmailStr
     role: Role
-    first_name: str
-    last_name: str
-    phone_number: Optional[str] = None
 
 class UserCreate(UserBase):
     password: str
@@ -44,9 +41,6 @@ class User(UserBase):
 # HealthcareProvider Schemas
 class HealthcareProviderBase(BaseModel):
     user_id: int
-    specialization: str
-    bio: Optional[str] = None
-    license_number: str
 
 class HealthcareProviderCreate(HealthcareProviderBase):
     pass
@@ -60,9 +54,7 @@ class HealthcareProvider(HealthcareProviderBase):
 # Patient Schemas
 class PatientBase(BaseModel):
     user_id: int
-    date_of_birth: datetime
-    gender: str
-    medical_history_summary: Optional[str] = None
+
 
 class PatientCreate(PatientBase):
     pass
@@ -97,6 +89,7 @@ class AppointmentBase(BaseModel):
     end_time: datetime
     reason_for_visit: str
     status: AppointmentStatus
+    video_link: Optional[str] = None
 
 class AppointmentCreate(AppointmentBase):
     pass
@@ -119,7 +112,6 @@ class AppointmentFeedbackCreate(AppointmentFeedbackBase):
 class AppointmentFeedback(AppointmentFeedbackBase):
     model_config = ConfigDict(from_attributes=True)
     id: int
-
 
 
 # Notification Schemas

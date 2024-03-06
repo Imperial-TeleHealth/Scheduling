@@ -61,26 +61,27 @@ class Appointment(Base):
     end_time = Column(DateTime)
     status = Column(Enum(AppointmentStatus))
     reason_for_visit = Column(Text)
+    video_link = Column(String)
 
-class AppointmentFeedback(Base):
-    __tablename__ = "appointment_feedback"
-    id = Column(Integer, primary_key=True, index=True)
-    appointment_id = Column(Integer, ForeignKey('appointments.id'))
-    rating = Column(Integer)
-    comments = Column(Text)
+# class AppointmentFeedback(Base):
+#     __tablename__ = "appointment_feedback"
+#     id = Column(Integer, primary_key=True, index=True)
+#     appointment_id = Column(Integer, ForeignKey('appointments.id'))
+#     rating = Column(Integer)
+#     comments = Column(Text)
 
-class Notification(Base):
-    __tablename__ = "notifications"
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey('users.id'))
-    appointment_id = Column(Integer, ForeignKey('appointments.id'), nullable=True)
-    notification_type = Column(Enum(NotificationType))
-    status = Column(String)
-    scheduled_send_time = Column(DateTime)
+# class Notification(Base):
+#     __tablename__ = "notifications"
+#     id = Column(Integer, primary_key=True, index=True)
+#     user_id = Column(Integer, ForeignKey('users.id'))
+#     appointment_id = Column(Integer, ForeignKey('appointments.id'), nullable=True)
+#     notification_type = Column(Enum(NotificationType))
+#     status = Column(String)
+#     scheduled_send_time = Column(DateTime)
 
-class SystemSettings(Base):
-    __tablename__ = "system_settings"
-    id = Column(Integer, primary_key=True, index=True)
-    key = Column(String, unique=True)
-    value = Column(String)
-    description = Column(Text)
+# class SystemSettings(Base):
+#     __tablename__ = "system_settings"
+#     id = Column(Integer, primary_key=True, index=True)
+#     key = Column(String, unique=True)
+#     value = Column(String)
+#     description = Column(Text)
