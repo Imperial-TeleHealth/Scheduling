@@ -1,6 +1,10 @@
 FROM --platform=linux/amd64 public.ecr.aws/docker/library/python:3.10.12-slim-buster
 
 
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
+
+
 # Install system dependencies for pyodbc
 # Install Microsoft ODBC Driver for SQL Server
 RUN apt-get update && apt-get install -y --no-install-recommends \
