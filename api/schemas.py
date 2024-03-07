@@ -85,17 +85,18 @@ class Availability(AvailabilityBase):
 class AppointmentBase(BaseModel):
     patient_id: int
     provider_id: int
-    scheduled_time: datetime
     end_time: datetime
-    reason_for_visit: str
-    status: AppointmentStatus
     video_link: Optional[str] = None
 
-class AppointmentCreate(AvailabilityBase):
+class AppointmentCreate(AppointmentBase):
+    start_time: datetime
     patient_id: int
     reason_for_visit: str
 
 class Appointment(AppointmentBase):
+    scheduled_time: datetime
+    reason_for_visit: str
+    status: AppointmentStatus
     model_config = ConfigDict(from_attributes=True)
     id: int
 

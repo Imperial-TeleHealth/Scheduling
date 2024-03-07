@@ -79,7 +79,7 @@ async def test_book_appointment():
         async with LifespanManager(app):
             # async with AsyncClient(app=app, base_url="http://test") as client:
             async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
-                response = await client.post("/appointments/book", json={"patient_id": 1, "provider_id": 1, "start_time": "2022-01-01T09:00:00", "end_time": "2022-01-01T09:30:00", "status": "Available", "reason_for_visit": "Annual checkup"})
+                response = await client.post("/appointments/book", json={"patient_id": 1, "provider_id": 1, "start_time": "2022-01-01T09:00:00", "end_time": "2022-01-01T09:30:00", "reason_for_visit": "Annual checkup"})
                 assert response.status_code == 200, response.json()
                 assert response.json() == mock_return_value
 
