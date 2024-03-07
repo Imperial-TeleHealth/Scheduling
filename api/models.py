@@ -1,7 +1,7 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Text, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.asyncio import AsyncSession
-from .database import Base
+from database import Base
 import enum
 
 
