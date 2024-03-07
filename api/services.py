@@ -4,8 +4,9 @@ from api import models, schemas
 from datetime import datetime
 
 async def get_available_appointments(db: AsyncSession) -> list[schemas.AvailabilityBase]:
-    query = await db.execute(select(models.Availability)).where(models.Availability.start_time > datetime.today())
-    return query.scalars().all()
+    async with db as session:
+        result = await session.execute(select(models.Availability).where(models.Availability.start_time > datetime.today()))
+        return result.scalars().all()
 
 # get available appointments for a healthcare provider after the current time
 async def get_provider_available_appointments(provider_id: int, db: AsyncSession) -> list[schemas.AvailabilityBase]:
@@ -13,7 +14,7 @@ async def get_provider_available_appointments(provider_id: int, db: AsyncSession
     return query.scalars().all()
 
 # get patient's upcoming appointments after the current time
-async def get_patient_upcoming_appointments(patient_id: int, db: AsyncSession) -> list[schemas.AppointmentBase]:
+async def get_patient_upcoming_appointments(patient_id: int, current_time: datetime, db: AsyncSession) -> list[schemas.AppointmentBase]:
     query = await db.execute(select(models.Appointment).where(models.Appointment.patient_id == patient_id).where(models.Appointment.end_time > datetime.now()))
     return query.scalars().all()
 
@@ -21,7 +22,6 @@ async def get_patient_upcoming_appointments(patient_id: int, db: AsyncSession) -
 async def get_provider_scheduled_appointments(provider_id: int, db: AsyncSession) -> list[schemas.AppointmentBase]:
     query = await db.execute(select(models.Appointment).where(models.Appointment.provider_id == provider_id).where(models.Appointment.end_time > datetime.now()))
     return query.scalars().all()
-
 
 
 # book an appointment
