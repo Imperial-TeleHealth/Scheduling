@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.asyncio import AsyncSession
 from .database import Base
 import enum
-from sqlalchemy.orm import declarative_base
+
 
 
 class Role(enum.Enum):
