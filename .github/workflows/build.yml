@@ -70,4 +70,3 @@ jobs:
           build-args: DATABASE_URL=${{ secrets.DATABASE_URL }}
 
 
-
