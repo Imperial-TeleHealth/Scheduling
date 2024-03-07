@@ -1,15 +1,17 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Text, Enum
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, DeclarativeBase
 from sqlalchemy.ext.asyncio import AsyncSession
-from database import Base
 import enum
 
 
+class Base(DeclarativeBase):
+    pass
 
-class Role(enum.Enum):
-    patient = "Patient"
-    healthcare_provider = "Healthcare Provider"
-    administrator = "Administrator"
+
+# class Role(enum.Enum):
+#     patient = "Patient"
+#     healthcare_provider = "Healthcare Provider"
+#     administrator = "Administrator"
 
 class Status(enum.Enum):
     available = "Available"

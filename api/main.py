@@ -49,12 +49,12 @@ async def cancel_appointment(appointment_id: int, db: AsyncSession = Depends(get
 
 
 
-@app.get("/patients/{patient_id}/appointments", response_model=List[schemas.Appointment])
+@app.get("/patients/{patient_id}/appointments", response_model=list[schemas.Appointment])
 async def view_patient_appointments(patient_id: int, db: AsyncSession = Depends(get_db)):
     appointments = await services.get_patient_appointments(patient_id, db)
     return appointments
 
-@app.get("/providers/{provider_id}/appointments", response_model=List[schemas.Appointment])
+@app.get("/providers/{provider_id}/appointments", response_model=list[schemas.Appointment])
 async def view_provider_appointments(provider_id: int, db: AsyncSession = Depends(get_db)):
     appointments = await services.get_provider_appointments(provider_id, db)
     return appointments
