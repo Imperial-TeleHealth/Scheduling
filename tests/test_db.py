@@ -4,10 +4,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
-from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 
-from models import User
 
 load_dotenv(override=True)
 DATABASE_URL = os.getenv('DATABASE_URL')
