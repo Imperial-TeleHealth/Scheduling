@@ -18,6 +18,11 @@ async def get_patient_upcoming_appointments(patient_id: int, db: AsyncSession) -
     async with db as session:
         result = await session.execute(select(models.Appointment).where(models.Appointment.patient_id == patient_id).where(models.Appointment.end_time > datetime.now()))
         return result.scalars().all()
+    
+async def get_provider_upcoming_appointments(provider_id: int, db: AsyncSession) -> list[schemas.AppointmentBase]:
+    async with db as session:
+        result = await session.execute(select(models.Appointment).where(models.Appointment.provider_id == provider_id).where(models.Appointment.end_time > datetime.now()))
+        return result.scalars().all()
 
 # get upcoming appointments for a healthcare provider after the current time
 async def get_provider_scheduled_appointments(provider_id: int, db: AsyncSession) -> list[schemas.AppointmentBase]:
@@ -30,19 +35,28 @@ async def get_provider_scheduled_appointments(provider_id: int, db: AsyncSession
 async def book_appointment(appointment: schemas.AppointmentCreate, db: AsyncSession) -> schemas.Appointment:
     async with db as session:
         # check if the appointment slot is available
-        appointment_start = appointment.scheduled_time
+        appointment_start = appointment.start_time
         provider_id = appointment.provider_id
-        result = await session.execute(select(models.Availability).where(models.Availability.provider_id == provider_id).where(models.Availability.start_time == appointment_start))
+        result = await session.execute(select(models.Availability).where(models.Availability.provider_id == provider_id)
+                                       .where(models.Availability.start_time == appointment_start)
+                                       .where(models.Availability.status == models.Status.available))
         availability = result.scalars().first()
         if availability.status != models.Status.available:
             raise ValueError("Appointment slot is not available")
         
         # generate video link
-        video_link = f"https://example.com/video/{appointment.scheduled_time}"
+        video_link = f"https://example.com/video/{appointment.start_time}"
         
-        appointment_data = appointment.dict()
+        appointment_data = {}
+        appointment_data["scheduled_time"] = appointment.start_time
+        appointment_data["end_time"] = appointment.end_time
+        appointment_data["reason_for_visit"] = appointment.reason_for_visit
+        appointment_data["patient_id"] = appointment.patient_id
+        appointment_data["provider_id"] = appointment.provider_id
         appointment_data["video_link"] = video_link
-        db_appointment = models.Appointment(**appointment_data, status=models.AppointmentStatus.scheduled)
+        appointment_data["status"] = models.AppointmentStatus.scheduled
+        appointment_data["reason_for_visit"] = appointment.reason_for_visit
+        db_appointment = models.Appointment(**appointment_data)
         session.add(db_appointment)
         session.commit()
         session.refresh(db_appointment)

@@ -91,8 +91,9 @@ class AppointmentBase(BaseModel):
     status: AppointmentStatus
     video_link: Optional[str] = None
 
-class AppointmentCreate(AppointmentBase):
-    pass
+class AppointmentCreate(AvailabilityBase):
+    patient_id: int
+    reason_for_visit: str
 
 class Appointment(AppointmentBase):
     model_config = ConfigDict(from_attributes=True)

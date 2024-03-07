@@ -20,13 +20,13 @@ async def view_provider_available_appointments(provider_id: int, db: AsyncSessio
 
 # view my patient's upcoming appointments
 @app.get("/appointments/{patient_id}/upcoming", response_model=list[schemas.AppointmentBase])
-async def view_patient_upcoming_appointments(patient_id: int, db: AsyncSession = Depends(get_db)):
+async def get_patient_upcoming_appointments(patient_id: int, db: AsyncSession = Depends(get_db)):
     appointments = await services.get_patient_upcoming_appointments(patient_id, db)
     return appointments
 
 # view upcoming appointments for a healthcare provider
 @app.get("/appointments/{provider_id}/scheduled", response_model=list[schemas.AppointmentBase])
-async def view_provider_scheduled_appointments(provider_id: int, db: AsyncSession = Depends(get_db)):
+async def get_provider_scheduled_appointments(provider_id: int, db: AsyncSession = Depends(get_db)):
     appointments = await services.get_provider_scheduled_appointments(provider_id, db)
     return appointments
 
