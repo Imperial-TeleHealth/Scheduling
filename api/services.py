@@ -9,23 +9,23 @@ async def get_available_appointments(db: AsyncSession) -> list[schemas.Availabil
         return result.scalars().all()
 
 # get available appointments for a healthcare provider after the current time
-async def get_provider_available_appointments(provider_id: int, db: AsyncSession) -> list[schemas.AvailabilityBase]:
+async def get_provider_available_appointments(provider_id: str, db: AsyncSession) -> list[schemas.AvailabilityBase]:
     async with db as session:
         result = await session.execute(select(models.Availability).where(models.Availability.provider_id == provider_id).where(models.Availability.status == models.Status.available).where(models.Availability.start_time > datetime.today()))
         return result.scalars().all()
 # get patient's upcoming appointments after the current time
-async def get_patient_upcoming_appointments(patient_id: int, db: AsyncSession) -> list[schemas.AppointmentBase]:
+async def get_patient_upcoming_appointments(patient_id: str, db: AsyncSession) -> list[schemas.AppointmentBase]:
     async with db as session:
         result = await session.execute(select(models.Appointment).where(models.Appointment.patient_id == patient_id).where(models.Appointment.end_time > datetime.now()))
         return result.scalars().all()
     
-async def get_provider_upcoming_appointments(provider_id: int, db: AsyncSession) -> list[schemas.AppointmentBase]:
+async def get_provider_upcoming_appointments(provider_id: str, db: AsyncSession) -> list[schemas.AppointmentBase]:
     async with db as session:
         result = await session.execute(select(models.Appointment).where(models.Appointment.provider_id == provider_id).where(models.Appointment.end_time > datetime.now()))
         return result.scalars().all()
 
 # get upcoming appointments for a healthcare provider after the current time
-async def get_provider_scheduled_appointments(provider_id: int, db: AsyncSession) -> list[schemas.AppointmentBase]:
+async def get_provider_scheduled_appointments(provider_id: str, db: AsyncSession) -> list[schemas.AppointmentBase]:
     async with db as session:
         result = await session.execute(select(models.Appointment).where(models.Appointment.provider_id == provider_id).where(models.Appointment.end_time > datetime.now()))
         return result.scalars().all()
@@ -85,13 +85,13 @@ async def cancel_appointment(appointment_id: int, db: AsyncSession):
         return {"message": "Appointment cancelled successfully"}
 
 # get patient's appointments
-async def get_patient_appointments(patient_id: int, db: AsyncSession) -> list[schemas.Appointment]:
+async def get_patient_appointments(patient_id: str, db: AsyncSession) -> list[schemas.Appointment]:
     async with db as session:
         result = await session.execute(select(models.Appointment).where(models.Appointment.patient_id == patient_id))
         return result.scalars().all()
 
 # get healthcare provider's appointments
-async def get_provider_appointments(provider_id: int, db: AsyncSession) -> list[schemas.Appointment]:
+async def get_provider_appointments(provider_id: str, db: AsyncSession) -> list[schemas.Appointment]:
     async with db as session:
         query = await session.execute(select(models.Appointment).where(models.Appointment.provider_id == provider_id))
         return query.scalars().all()
