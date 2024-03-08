@@ -31,40 +31,42 @@ async def get_provider_scheduled_appointments(provider_id: int, db: AsyncSession
         return result.scalars().all()
 
 
-# book an appointment
 async def book_appointment(appointment: schemas.AppointmentCreate, db: AsyncSession) -> schemas.Appointment:
-    async with db as session:
-        # check if the appointment slot is available
-        appointment_start = appointment.start_time
-        provider_id = appointment.provider_id
-        result = await session.execute(select(models.Availability).where(models.Availability.provider_id == provider_id)
-                                       .where(models.Availability.start_time == appointment_start)
-                                       .where(models.Availability.status == models.Status.available))
+    async with db.begin():  # This starts a transaction.
+        # Check if the appointment slot is available.
+        result = await db.execute(select(models.Availability)
+                                  .where(models.Availability.provider_id == appointment.provider_id)
+                                  .where(models.Availability.start_time == appointment.start_time)
+                                  .where(models.Availability.status == models.Status.available))
         availability = result.scalars().first()
-        if availability.status is None:
+        if availability is None:
             raise ValueError("Appointment slot is not available")
-        
-        # generate video link
+
+        # Generate video link.
         video_link = f"https://example.com/video/{appointment.start_time}"
-        
-        appointment_data = {}
-        
-        appointment_data["scheduled_time"] = appointment.start_time
-        appointment_data["end_time"] = appointment.end_time
-        appointment_data["reason_for_visit"] = appointment.reason_for_visit
-        appointment_data["patient_id"] = appointment.patient_id
-        appointment_data["provider_id"] = appointment.provider_id
-        appointment_data["video_link"] = video_link
-        appointment_data["status"] = models.AppointmentStatus.scheduled
-        appointment_data["reason_for_visit"] = appointment.reason_for_visit
+
+        # Create appointment data and object.
+        appointment_data = {
+            "scheduled_time": appointment.start_time,
+            "end_time": appointment.end_time,
+            "reason_for_visit": appointment.reason_for_visit,
+            "patient_id": appointment.patient_id,
+            "provider_id": appointment.provider_id,
+            "video_link": video_link,
+            "status": models.AppointmentStatus.scheduled
+        }
         db_appointment = models.Appointment(**appointment_data)
-        session.add(db_appointment)
-        await session.refresh(db_appointment)
-        # update availability status for healthcare provider
+        db.add(db_appointment)
+
+        # Update availability status for healthcare provider.
         availability.status = models.Status.booked
-        session.commit()
-        
-        return db_appointment
+
+        # The transaction will be committed at the end of the async with block.
+        # If an exception occurs, it will be rolled back automatically.
+
+    await db.refresh(db_appointment)  # Refresh to get the updated state from the DB.
+    
+    return db_appointment
 
 # cancel an appointment
 async def cancel_appointment(appointment_id: int, db: AsyncSession):
