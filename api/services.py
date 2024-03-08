@@ -36,18 +36,18 @@ async def book_appointment(appointment: schemas.AppointmentCreate, db: AsyncSess
         # Check if the appointment slot is available.
         result = await db.execute(select(models.Availability)
                                   .where(models.Availability.provider_id == appointment.provider_id)
-                                  .where(models.Availability.start_time == appointment.start_time)
+                                  .where(models.Availability.start_time == appointment.scheduled_time)
                                   .where(models.Availability.status == models.Status.available))
         availability = result.scalars().first()
         if availability is None:
             raise ValueError("Appointment slot is not available")
 
         # Generate video link.
-        video_link = f"https://example.com/video/{appointment.start_time}"
+        video_link = f"https://example.com/video/{appointment.scheduled_time}"
 
         # Create appointment data and object.
         appointment_data = {
-            "scheduled_time": appointment.start_time,
+            "scheduled_time": appointment.scheduled_time,
             "end_time": appointment.end_time,
             "reason_for_visit": appointment.reason_for_visit,
             "patient_id": appointment.patient_id,
