@@ -90,7 +90,6 @@ class AppointmentBase(BaseModel):
 
 class AppointmentCreate(AppointmentBase):
     start_time: datetime
-    patient_id: int
     reason_for_visit: str
 
 class Appointment(AppointmentBase):
