@@ -84,9 +84,9 @@ jobs:
       - name: Update Container App
         uses: azure/container-apps-deploy-action@v0
         with:
-          imageToDeploy: ghcr.io/imperial-telehealth/video:latest
+          imageToDeploy: ghcr.io/imperial-telehealth/scheduling:latest
           containerAppName: video
           containerAppEnvironment: Telehealth
           resourceGroup: TeleHealth-rg
-          targetPort: 5000
+          targetPort: 8000
 
