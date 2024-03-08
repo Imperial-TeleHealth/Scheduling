@@ -85,7 +85,7 @@ jobs:
         uses: azure/container-apps-deploy-action@v0
         with:
           imageToDeploy: ghcr.io/imperial-telehealth/scheduling:latest
-          containerAppName: video
+          containerAppName: scheduler
           containerAppEnvironment: Telehealth
           resourceGroup: TeleHealth-rg
           targetPort: 8000
