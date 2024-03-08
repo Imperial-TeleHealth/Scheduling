@@ -1,27 +1,15 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Text, Enum
-from sqlalchemy.orm import relationship, DeclarativeBase
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import Column, String, DateTime, Enum, ForeignKey, Text, Integer
+from sqlalchemy.orm import declarative_base
 import enum
 
+Base = declarative_base()
 
-class Base(DeclarativeBase):
-    pass
-
-
-# class Role(enum.Enum):
-#     patient = "Patient"
-#     healthcare_provider = "Healthcare Provider"
-#     administrator = "Administrator"
-
+# Enum Definitions
 class Status(enum.Enum):
     available = "Available"
     booked = "Booked"
     cancelled = "Cancelled"
     blocked = "Blocked"
-
-class NotificationType(enum.Enum):
-    appointment_reminder = "AppointmentReminder"
-    appointment_change = "AppointmentChange"
 
 class AppointmentStatus(enum.Enum):
     scheduled = "Scheduled"
@@ -29,61 +17,23 @@ class AppointmentStatus(enum.Enum):
     cancelled = "Cancelled"
     no_show = "NoShow"
 
-class User(Base):
-    __tablename__ = "users"
-    id = Column(Integer, primary_key=True, index=True)
-
-
-class HealthcareProvider(Base):
-    __tablename__ = "healthcare_providers"
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey('users.id'))
-    user = relationship("User")
-
-class Patient(Base):
-    __tablename__ = "patients"
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey('users.id'))
-    user = relationship("User")
-
+# Availability Table
 class Availability(Base):
     __tablename__ = "availability"
-    id = Column(Integer, primary_key=True, index=True)
-    provider_id = Column(Integer, ForeignKey('healthcare_providers.id'))
+    id = Column(Integer, primary_key=True)
+    provider_id = Column(String)  # Adjusted to String
     start_time = Column(DateTime)
     end_time = Column(DateTime)
     status = Column(Enum(Status))
 
+# Appointment Table
 class Appointment(Base):
     __tablename__ = "appointments"
-    id = Column(Integer, primary_key=True, index=True)
-    patient_id = Column(Integer, ForeignKey('patients.id'))
-    provider_id = Column(Integer, ForeignKey('healthcare_providers.id'))
+    id = Column(Integer, primary_key=True)
+    patient_id = Column(String)  # Adjusted to String
+    provider_id = Column(String)  # Adjusted to String
     scheduled_time = Column(DateTime)
     end_time = Column(DateTime)
     status = Column(Enum(AppointmentStatus))
     reason_for_visit = Column(Text)
     video_link = Column(String)
-
-# class AppointmentFeedback(Base):
-#     __tablename__ = "appointment_feedback"
-#     id = Column(Integer, primary_key=True, index=True)
-#     appointment_id = Column(Integer, ForeignKey('appointments.id'))
-#     rating = Column(Integer)
-#     comments = Column(Text)
-
-# class Notification(Base):
-#     __tablename__ = "notifications"
-#     id = Column(Integer, primary_key=True, index=True)
-#     user_id = Column(Integer, ForeignKey('users.id'))
-#     appointment_id = Column(Integer, ForeignKey('appointments.id'), nullable=True)
-#     notification_type = Column(Enum(NotificationType))
-#     status = Column(String)
-#     scheduled_send_time = Column(DateTime)
-
-# class SystemSettings(Base):
-#     __tablename__ = "system_settings"
-#     id = Column(Integer, primary_key=True, index=True)
-#     key = Column(String, unique=True)
-#     value = Column(String)
-#     description = Column(Text)
