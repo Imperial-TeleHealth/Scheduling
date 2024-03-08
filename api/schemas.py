@@ -33,7 +33,7 @@ class Availability(AvailabilityBase):
 class AppointmentBase(BaseModel):
     patient_id: str
     provider_id: str
-    start_time: datetime
+    scheduled_time: datetime
     end_time: datetime
     reason_for_visit: str
 
