@@ -72,3 +72,21 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: DATABASE_URL=${{ secrets.DATABASE_URL }}
 
+  Azure_Container_Push:
+    runs-on: ubuntu-latest
+    needs: Docker_Build_Push
+    steps:
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Update Container App
+        uses: azure/container-apps-deploy-action@v0
+        with:
+          imageToDeploy: ghcr.io/imperial-telehealth/video:latest
+          containerAppName: video
+          containerAppEnvironment: Telehealth
+          resourceGroup: TeleHealth-rg
+          targetPort: 5000
+
